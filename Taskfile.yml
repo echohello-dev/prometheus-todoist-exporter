@@ -60,14 +60,14 @@ tasks:
       - docker run -p 9090:9090 -e TODOIST_API_TOKEN=${TODOIST_API_TOKEN} prometheus-todoist-exporter
 
   docker-compose-up:
-    desc: Run using docker-compose
+    desc: Run using Docker Compose
     cmds:
-      - docker-compose up -d
+      - docker compose up -d
 
   docker-compose-down:
     desc: Stop docker-compose services
     cmds:
-      - docker-compose down
+      - docker compose down
 
   setup-dev:
     desc: Setup local development environment
