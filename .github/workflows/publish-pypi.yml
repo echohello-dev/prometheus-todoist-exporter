@@ -1,0 +1,79 @@
+name: Publish to PyPI
+
+on:
+  workflow_run:
+    workflows: ["Release Please"]
+    types:
+      - completed
+
+jobs:
+  publish-pypi:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Check for release
+        id: check-release
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "no-tag")
+          if [[ $LATEST_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Found release tag: $LATEST_TAG"
+            echo "release_found=true" >> $GITHUB_OUTPUT
+            echo "release_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          else
+            echo "No release tag found"
+            echo "release_found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Cache asdf
+        if: steps.check-release.outputs.release_found == 'true'
+        uses: actions/cache@v4
+        id: asdf-cache
+        with:
+          path: ~/.asdf
+          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
+          restore-keys: |
+            ${{ runner.os }}-asdf-
+
+      - name: Cache Poetry
+        if: steps.check-release.outputs.release_found == 'true'
+        uses: actions/cache@v4
+        id: poetry-cache
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Install asdf
+        if: steps.check-release.outputs.release_found == 'true'
+        uses: asdf-vm/actions/install@1117842ea70e2711a0072e3a71265cbfe2c830be # v0.16
+
+      - name: Setup asdf plugins
+        if: steps.check-release.outputs.release_found == 'true'
+        run: |
+          asdf plugin add python
+          asdf plugin add poetry
+          asdf plugin add task
+
+      - name: Install tools with asdf
+        if: steps.check-release.outputs.release_found == 'true'
+        run: |
+          asdf install
+          pip install poetry
+          asdf reshim python
+
+      - name: Install dependencies
+        if: steps.check-release.outputs.release_found == 'true'
+        run: task install
+
+      - name: Build and publish to PyPI
+        if: steps.check-release.outputs.release_found == 'true'
+        env:
+          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: task publish-pypi

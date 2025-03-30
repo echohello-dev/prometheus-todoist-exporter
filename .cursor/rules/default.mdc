@@ -1,0 +1,9 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+- Use Poetry to manage deps in this project
+- Use ruff to format code
+- Use Task to run commands

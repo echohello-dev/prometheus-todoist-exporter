@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache asdf
+        uses: actions/cache@v4
+        id: asdf-cache
+        with:
+          path: ~/.asdf
+          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
+          restore-keys: |
+            ${{ runner.os }}-asdf-
+
+      - name: Cache Poetry
+        uses: actions/cache@v4
+        id: poetry-cache
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Install asdf
+        uses: asdf-vm/actions/install@1117842ea70e2711a0072e3a71265cbfe2c830be # v0.16
+
+      - name: Setup asdf plugins
+        run: |
+          asdf plugin add python
+          asdf plugin add poetry
+          asdf plugin add task
+
+      - name: Install tools with asdf
+        run: |
+          asdf install
+          pip install poetry
+          asdf reshim python
+
+      - name: Install dependencies
+        run: task install
+
+      - name: Run linting
+        run: task lint
+
+      - name: Run tests
+        run: task test
