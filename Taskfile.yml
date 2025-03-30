@@ -52,12 +52,12 @@ tasks:
   docker-build:
     desc: Build the Docker image locally
     cmds:
-      - docker build -t prometheus-todoist-exporter .
+      - docker build -t ghcr.io/echohello-dev/prometheus-todoist-exporter:latest .
 
   docker-run:
     desc: Run the Docker container locally
     cmds:
-      - docker run -p 9090:9090 -e TODOIST_API_TOKEN=${TODOIST_API_TOKEN} prometheus-todoist-exporter
+      - docker run -p 9090:9090 -e TODOIST_API_TOKEN=${TODOIST_API_TOKEN} ghcr.io/echohello-dev/prometheus-todoist-exporter:latest
 
   docker-compose-up:
     desc: Run using Docker Compose

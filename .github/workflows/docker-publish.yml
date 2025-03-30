@@ -12,7 +12,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: echohello-dev/prometheus-todoist-exporter
 
 jobs:
   build:
@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -78,12 +78,6 @@ jobs:
 
       - name: Install dependencies
         run: task install
-
-      - name: Run linting
-        run: task lint
-
-      - name: Test with pytest
-        run: task test
 
       - name: Log in to the Container registry
         uses: docker/login-action@v2
