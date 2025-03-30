@@ -44,7 +44,7 @@ jobs:
           fi
 
       - name: Install asdf
-        uses: asdf-vm/actions/setup@v2
+        uses: asdf-vm/actions/install@1117842ea70e2711a0072e3a71265cbfe2c830be # v0.16
 
       - name: Setup asdf plugins
         run: |
