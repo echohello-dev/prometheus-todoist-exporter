@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-todoist-exporter
+  labels:
+    app: prometheus-todoist-exporter
+spec:
+  selector:
+    app: prometheus-todoist-exporter
+  ports:
+  - port: 9090
+    targetPort: metrics
+    name: metrics
+  type: ClusterIP

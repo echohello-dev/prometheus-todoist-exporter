@@ -103,3 +103,49 @@ tasks:
     desc: Publish to PyPI
     cmds:
       - poetry publish --build
+
+  k8s-deploy:
+    desc: Deploy to Kubernetes using kustomize
+    cmds:
+      - |
+        if [ -z "${TODOIST_API_TOKEN}" ]; then
+          echo "Error: TODOIST_API_TOKEN environment variable is not set"
+          exit 1
+        fi
+      - kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
+      - |
+        TODOIST_API_TOKEN_B64=$(echo -n "${TODOIST_API_TOKEN}" | base64)
+        sed "s/<BASE64_ENCODED_API_TOKEN>/$TODOIST_API_TOKEN_B64/" deploy/kubernetes/secret.yaml | kubectl apply -f -
+      - kubectl apply -k deploy/kubernetes
+
+  k8s-delete:
+    desc: Delete Kubernetes deployment
+    cmds:
+      - kubectl delete -k deploy/kubernetes
+      - echo "You may want to delete the namespace with 'kubectl delete namespace monitoring' if it's no longer needed"
+
+  helm-deploy:
+    desc: Deploy using Helm chart
+    cmds:
+      - |
+        if [ -z "${TODOIST_API_TOKEN}" ]; then
+          echo "Error: TODOIST_API_TOKEN environment variable is not set"
+          exit 1
+        fi
+      - helm upgrade --install todoist-exporter ./deploy/helm/prometheus-todoist-exporter --namespace monitoring --create-namespace --set todoist.apiToken="${TODOIST_API_TOKEN}"
+
+  helm-delete:
+    desc: Delete Helm deployment
+    cmds:
+      - helm uninstall todoist-exporter --namespace monitoring
+      - echo "You may want to delete the namespace with 'kubectl delete namespace monitoring' if it's no longer needed"
+
+  helm-lint:
+    desc: Lint the Helm chart
+    cmds:
+      - helm lint ./deploy/helm/prometheus-todoist-exporter
+
+  helm-template:
+    desc: Generate Kubernetes manifests from Helm chart
+    cmds:
+      - helm template todoist-exporter ./deploy/helm/prometheus-todoist-exporter --namespace monitoring --set todoist.apiToken="dummy-value"
