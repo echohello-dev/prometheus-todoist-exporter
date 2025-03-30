@@ -1,0 +1,66 @@
+{
+    "packages": {
+        ".": {
+            "release-type": "python",
+            "package-name": "prometheus-todoist-exporter",
+            "extra-files": [
+                {
+                    "type": "json",
+                    "path": "pyproject.toml",
+                    "jsonpath": "$.tool.poetry.version"
+                },
+                {
+                    "type": "simple",
+                    "path": "prometheus_todoist_exporter/__init__.py",
+                    "pattern": "__version__ = \"${version}\""
+                }
+            ]
+        }
+    },
+    "bump-minor-pre-major": true,
+    "bump-patch-for-minor-pre-major": true,
+    "include-v-in-tag": true,
+    "pull-request-header": "# Automated Release PR",
+    "changelog-types": [
+        {
+            "type": "feat",
+            "section": "Features",
+            "hidden": false
+        },
+        {
+            "type": "fix",
+            "section": "Bug Fixes",
+            "hidden": false
+        },
+        {
+            "type": "docs",
+            "section": "Documentation",
+            "hidden": false
+        },
+        {
+            "type": "chore",
+            "section": "Miscellaneous",
+            "hidden": true
+        },
+        {
+            "type": "refactor",
+            "section": "Code Refactoring",
+            "hidden": false
+        },
+        {
+            "type": "test",
+            "section": "Tests",
+            "hidden": true
+        },
+        {
+            "type": "build",
+            "section": "Build System",
+            "hidden": true
+        },
+        {
+            "type": "ci",
+            "section": "Continuous Integration",
+            "hidden": true
+        }
+    ]
+}
