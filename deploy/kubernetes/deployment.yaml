@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-todoist-exporter
+  labels:
+    app: prometheus-todoist-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-todoist-exporter
+  template:
+    metadata:
+      labels:
+        app: prometheus-todoist-exporter
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: exporter
+        image: ghcr.io/echohello-dev/prometheus-todoist-exporter:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9090
+          name: metrics
+        env:
+        - name: TODOIST_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: todoist-secret
+              key: api-token
+        - name: EXPORTER_PORT
+          value: "9090"
+        - name: COLLECTION_INTERVAL
+          value: "60"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: metrics
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /metrics
+            port: metrics
+          initialDelaySeconds: 5
+          periodSeconds: 10
