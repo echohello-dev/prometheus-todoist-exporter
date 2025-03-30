@@ -305,7 +305,7 @@ This repository uses GitHub Actions workflows for continuous integration, releas
 To enable these workflows, ensure the following secrets are set in your repository:
 
 1. For PyPI publishing:
-   - `PYPI_API_TOKEN`: A PyPI API token with upload permissions
+   - `POETRY_PYPI_TOKEN_PYPI`: A PyPI API token with upload permissions
 
 2. For Docker publishing:
    - GitHub Token with `packages:write` permission (automatic)

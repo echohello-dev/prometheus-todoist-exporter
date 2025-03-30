@@ -78,5 +78,5 @@ jobs:
       - name: Build and publish to PyPI
         if: steps.check-release.outputs.release_found == 'true'
         env:
-          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.POETRY_PYPI_TOKEN_PYPI }}
         run: task publish-pypi
