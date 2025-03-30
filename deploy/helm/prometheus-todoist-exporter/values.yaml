@@ -1,0 +1,78 @@
+# Default values for prometheus-todoist-exporter
+replicaCount: 1
+
+image:
+  repository: ghcr.io/echohello-dev/prometheus-todoist-exporter
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "9090"
+  prometheus.io/path: "/metrics"
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 9090
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+livenessProbe:
+  httpGet:
+    path: /metrics
+    port: metrics
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /metrics
+    port: metrics
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+# Prometheus Operator ServiceMonitor configuration
+serviceMonitor:
+  enabled: false
+  # namespace: monitoring
+  interval: 30s
+  scrapeTimeout: 10s
+  additionalLabels: {}
+
+# Exporter configuration
+exporter:
+  port: 9090
+  metricsPath: "/metrics"
+  collectionInterval: 60
+  completedTasksDays: 7
+  completedTasksHours: 24
+
+# Sensitive - will be stored in a Secret
+# For production, use a more secure method like Kubernetes secrets or external secret management
+todoist:
+  apiToken: ""

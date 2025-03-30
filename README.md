@@ -92,6 +92,89 @@ docker-compose up -d
 
 This will start both the Todoist exporter and a Prometheus instance configured to scrape metrics from the exporter.
 
+### Using Kubernetes
+
+Kubernetes manifests are provided in the `deploy/kubernetes` directory. These can be applied directly or deployed with Kustomize.
+
+1. Create the namespace:
+   ```bash
+   kubectl create namespace monitoring
+   ```
+
+2. Create a Secret with your Todoist API token:
+   ```bash
+   TODOIST_API_TOKEN_B64=$(echo -n 'your-todoist-api-token' | base64)
+   sed "s/<BASE64_ENCODED_API_TOKEN>/$TODOIST_API_TOKEN_B64/" deploy/kubernetes/secret.yaml | kubectl apply -f -
+   ```
+
+   Or create the Secret manually:
+   ```bash
+   kubectl create secret generic todoist-secret -n monitoring --from-literal=api-token=your-todoist-api-token
+   ```
+
+3. Deploy with Kustomize:
+   ```bash
+   kubectl apply -k deploy/kubernetes
+   ```
+
+4. To access the metrics endpoint:
+   ```bash
+   kubectl port-forward -n monitoring service/prometheus-todoist-exporter 9090:9090
+   ```
+
+5. View the metrics at http://localhost:9090/metrics
+
+### Using Helm
+
+A Helm chart is available in the `deploy/helm/prometheus-todoist-exporter` directory.
+
+1. Deploy the chart:
+   ```bash
+   helm install todoist-exporter ./deploy/helm/prometheus-todoist-exporter \
+     --namespace monitoring --create-namespace \
+     --set todoist.apiToken="your-todoist-api-token"
+   ```
+
+2. Configure with custom values:
+   ```bash
+   helm install todoist-exporter ./deploy/helm/prometheus-todoist-exporter \
+     --namespace monitoring --create-namespace \
+     --set todoist.apiToken="your-todoist-api-token" \
+     --set exporter.collectionInterval=30 \
+     --set service.type=NodePort
+   ```
+
+3. Using a custom values file:
+   ```bash
+   # Create a values.yaml file with your custom configuration
+   cat > my-values.yaml << EOF
+   todoist:
+     apiToken: "your-todoist-api-token"
+   exporter:
+     collectionInterval: 30
+   serviceMonitor:
+     enabled: true
+   EOF
+
+   # Install with custom values
+   helm install todoist-exporter ./deploy/helm/prometheus-todoist-exporter \
+     --namespace monitoring --create-namespace \
+     --values my-values.yaml
+   ```
+
+4. To upgrade the deployment:
+   ```bash
+   helm upgrade todoist-exporter ./deploy/helm/prometheus-todoist-exporter \
+     --namespace monitoring \
+     --reuse-values \
+     --set exporter.completedTasksDays=14
+   ```
+
+5. To uninstall:
+   ```bash
+   helm uninstall todoist-exporter --namespace monitoring
+   ```
+
 ### Using Poetry
 
 1. Install Poetry (if not already installed):
@@ -244,14 +327,32 @@ task docker-build
 # Run Docker container
 task docker-run
 
-# Run all quality checks (format, lint, test)
-task all
-
 # Start services with docker-compose
 task docker-compose-up
 
 # Stop services with docker-compose
 task docker-compose-down
+
+# Deploy to Kubernetes with kustomize
+task k8s-deploy
+
+# Delete Kubernetes deployment
+task k8s-delete
+
+# Deploy with Helm
+task helm-deploy
+
+# Delete Helm deployment
+task helm-delete
+
+# Lint Helm chart
+task helm-lint
+
+# Generate Kubernetes manifests from Helm chart
+task helm-template
+
+# Run all quality checks (format, lint, test)
+task all
 ```
 
 ## Building from Source
@@ -349,3 +450,46 @@ To enable these workflows, ensure the following secrets are set in your reposito
      cp .env.example .env  # Add your Todoist API token
      docker-compose up -d
      ```
+
+## Helm Chart Management
+
+The project includes a Helm chart in the `deploy/helm/prometheus-todoist-exporter` directory. When making changes to the Helm chart, follow these guidelines:
+
+### Chart Versioning
+
+1. The Helm chart follows semantic versioning (`major.minor.patch`)
+2. Chart version is specified in `deploy/helm/prometheus-todoist-exporter/Chart.yaml`
+3. When updating the chart:
+   - For non-breaking changes, increment the patch version
+   - For new features (non-breaking), increment the minor version
+   - For breaking changes, increment the major version
+
+### Testing Chart Changes
+
+Before committing chart changes:
+
+1. Lint the chart:
+   ```bash
+   task helm-lint
+   ```
+
+2. Test template rendering:
+   ```bash
+   task helm-template
+   ```
+
+3. Test installation in a dev environment:
+   ```bash
+   task helm-deploy
+   ```
+
+### Chart Documentation
+
+Keep the chart documentation in `deploy/helm/prometheus-todoist-exporter/README.md` synchronized with any changes to:
+- Chart parameters and defaults
+- Required Kubernetes versions
+- Examples
+
+### Release Process
+
+When a new version of the exporter is released, the chart's `appVersion` should be updated to match the released version.
