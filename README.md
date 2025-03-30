@@ -1,6 +1,11 @@
+![](./docs/images/todoist.webp)
+
 # Prometheus Todoist Exporter
 
 Extract Todoist API metrics via Prometheus with this exporter.
+
+> [!IMPORTANT]
+> This project is not affiliated with Todoist. It is a community-driven project.
 
 ## Features
 
