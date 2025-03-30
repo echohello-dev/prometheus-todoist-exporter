@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install asdf
+        uses: asdf-vm/actions/install@1117842ea70e2711a0072e3a71265cbfe2c830be
+
+      - name: Install dependencies
+        run: task install
+
+      - name: Run linting
+        run: task lint
+
+      - name: Run tests
+        run: task test

@@ -1,0 +1,98 @@
+name: Docker Build and Publish
+
+on:
+  workflow_run:
+    workflows: ["Release Please"]
+    types:
+      - completed
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      is_release: ${{ steps.check-release.outputs.release_found }}
+      release_tag: ${{ steps.check-release.outputs.release_tag }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check for release
+        id: check-release
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "no-tag")
+          if [[ $LATEST_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Found release tag: $LATEST_TAG"
+            echo "release_found=true" >> $GITHUB_OUTPUT
+            echo "release_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          else
+            echo "No release tag found"
+            echo "release_found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Install asdf
+        uses: asdf-vm/actions/setup@v2
+
+      - name: Setup asdf plugins
+        run: |
+          asdf plugin add python || true
+          asdf plugin add poetry || true
+          asdf plugin add task || true
+
+      - name: Install tools with asdf
+        run: |
+          asdf install
+
+      - name: Install dependencies
+        run: |
+          asdf exec poetry install
+
+      - name: Run linting
+        run: |
+          asdf exec task lint
+
+      - name: Test with pytest
+        run: |
+          asdf exec task test
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest,enable=${{ steps.check-release.outputs.release_found == 'true' }}
+            type=raw,value=${{ steps.check-release.outputs.release_tag }},enable=${{ steps.check-release.outputs.release_found == 'true' }}
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,format=long
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }} 

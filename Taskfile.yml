@@ -1,0 +1,84 @@
+version: '3'
+
+dotenv:
+  - .env
+
+tasks:
+  install:
+    desc: Install dependencies with Poetry
+    cmds:
+      - "poetry install"
+
+  format:
+    desc: Format the code with ruff
+    cmds:
+      - "poetry run ruff format ."
+
+  lint:
+    desc: Run linting checks
+    cmds:
+      - "poetry run ruff check ."
+
+  lint-fix:
+    desc: Run linting and fix issues
+    cmds:
+      - "poetry run ruff check --fix ."
+
+  test:
+    desc: Run tests
+    cmds:
+      - "poetry run pytest"
+
+  run:
+    desc: Run the Todoist exporter locally
+    cmds:
+      - "poetry run todoist-exporter"
+
+  docker-build:
+    desc: Build the Docker image locally
+    cmds:
+      - docker build -t prometheus-todoist-exporter .
+
+  docker-run:
+    desc: Run the Docker container locally
+    cmds:
+      - docker run -p 9090:9090 -e TODOIST_API_TOKEN=${TODOIST_API_TOKEN} prometheus-todoist-exporter
+
+  docker-compose-up:
+    desc: Run using docker-compose
+    cmds:
+      - docker-compose up -d
+
+  docker-compose-down:
+    desc: Stop docker-compose services
+    cmds:
+      - docker-compose down
+
+  setup-dev:
+    desc: Setup local development environment
+    cmds:
+      - cp -n .env.example .env || true
+      - echo "Created .env file from .env.example (if it didn't already exist). Please update with your TODOIST_API_TOKEN."
+      - task install
+
+  setup:
+    desc: Setup
+    cmds:
+      - |
+        if ! command -v asdf &> /dev/null; then
+          echo "asdf not found, installing..."
+          git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.11.3 || true
+          echo 'source ~/.asdf/asdf.sh' >> ~/.bashrc
+          echo 'source ~/.asdf/completions/asdf.bash' >> ~/.bashrc
+          source ~/.asdf/asdf.sh
+        fi
+      - asdf plugin add python
+      - asdf plugin add task
+      - asdf install
+      - pip install poetry
+      - asdf reshim python
+      - task setup-dev
+
+  all:
+    desc: Run format, lint, and test tasks
+    deps: [format, lint, test]
