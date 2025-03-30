@@ -7,6 +7,8 @@ Extract Todoist API metrics via Prometheus with this exporter.
 - Collects metrics from the Todoist API using the [official Python client](https://github.com/Doist/todoist-api-python)
 - Exposes these metrics in Prometheus format
 - Provides comprehensive task, project, collaborator, section, and comment metrics
+- Tracks completed tasks through the Todoist Sync API
+- Monitors tasks by labels, sections, and due dates
 - Configurable through environment variables
 - Includes Docker support for easy deployment
 - Uses Poetry for dependency management
@@ -30,6 +32,14 @@ The exporter provides the following metrics:
 | `todoist_priority_tasks` | Number of tasks by priority | project_name, project_id, priority |
 | `todoist_api_errors` | Number of API errors encountered | endpoint |
 | `todoist_scrape_duration_seconds` | Time taken to collect Todoist metrics | - |
+| `todoist_tasks_completed_today` | Number of tasks completed today | project_name, project_id |
+| `todoist_tasks_completed_week` | Number of tasks completed in the last N days | project_name, project_id, days |
+| `todoist_tasks_completed_hours` | Number of tasks completed in the last N hours | project_name, project_id, hours |
+| `todoist_section_tasks` | Number of tasks in a section | project_name, project_id, section_name, section_id |
+| `todoist_label_tasks` | Number of tasks with a specific label | label_name |
+| `todoist_tasks_with_due_date` | Number of tasks with a due date | project_name, project_id |
+| `todoist_recurring_tasks` | Number of recurring tasks | project_name, project_id |
+| `todoist_sync_api_completed_tasks` | Number of tasks completed via Sync API | project_name, project_id, timeframe |
 
 ## Configuration
 
@@ -41,6 +51,8 @@ The exporter can be configured using environment variables:
 | `EXPORTER_PORT` | Port for the HTTP server | 9090 |
 | `METRICS_PATH` | HTTP path for metrics | /metrics |
 | `COLLECTION_INTERVAL` | Seconds between metric collections | 60 |
+| `COMPLETED_TASKS_DAYS` | Number of days to look back for completed tasks | 7 |
+| `COMPLETED_TASKS_HOURS` | Number of hours to look back for completed tasks | 24 |
 
 ## Installation
 
