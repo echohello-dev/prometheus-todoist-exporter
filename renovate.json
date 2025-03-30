@@ -1,0 +1,63 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:recommended"
+    ],
+    "packageRules": [
+        {
+            "matchUpdateTypes": [
+                "minor",
+                "patch"
+            ],
+            "matchCurrentVersion": "!/^0/",
+            "automerge": true
+        },
+        {
+            "matchPackagePatterns": [
+                "^pytest"
+            ],
+            "groupName": "pytest packages"
+        }
+    ],
+    "poetry": {
+        "enabled": true
+    },
+    "docker": {
+        "enabled": true
+    },
+    "github-actions": {
+        "enabled": true
+    },
+    "pre-commit": {
+        "enabled": true
+    },
+    "asdf": {
+        "enabled": true,
+        "fileMatch": [
+            "(^|/)\\.tool-versions$"
+        ]
+    },
+    "dependencyDashboard": true,
+    "vulnerabilityAlerts": {
+        "labels": [
+            "security"
+        ],
+        "automerge": true,
+        "assignees": [
+            "@echohello-dev"
+        ]
+    },
+    "timezone": "Australia/Melbourne",
+    "semanticCommits": "enabled",
+    "semanticCommitType": "chore",
+    "labels": [
+        "dependencies"
+    ],
+    "prHourlyLimit": 5,
+    "prConcurrentLimit": 15,
+    "ignorePaths": [
+        "**/node_modules/**",
+        "**/bower_components/**",
+        "**/vendor/**"
+    ]
+}
