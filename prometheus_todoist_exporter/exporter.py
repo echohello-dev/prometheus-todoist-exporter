@@ -138,14 +138,13 @@ def collect_metrics():
             return
 
         # Reset metrics
-        TODOIST_TASKS_TOTAL._metrics.clear()
-        TODOIST_TASKS_OVERDUE._metrics.clear()
-        TODOIST_TASKS_DUE_TODAY._metrics.clear()
-        TODOIST_PROJECT_COLLABORATORS._metrics.clear()
-        TODOIST_SECTIONS_TOTAL._metrics.clear()
-        TODOIST_COMMENTS_TOTAL._metrics.clear()
-        TODOIST_PRIORITY_TASKS._metrics.clear()
-
+        TODOIST_TASKS_TOTAL.clear()
+        TODOIST_TASKS_OVERDUE.clear()
+        TODOIST_TASKS_DUE_TODAY.clear()
+        TODOIST_PROJECT_COLLABORATORS.clear()
+        TODOIST_SECTIONS_TOTAL.clear()
+        TODOIST_COMMENTS_TOTAL.clear()
+        TODOIST_PRIORITY_TASKS.clear()
         # Collect data from Todoist API
         projects_dict = collect_projects()
         if not projects_dict:
