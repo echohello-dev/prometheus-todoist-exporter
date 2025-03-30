@@ -112,10 +112,11 @@ This will start both the Todoist exporter and a Prometheus instance configured t
    ```bash
    task setup-dev
    ```
-   
+
    This will:
    - Copy `.env.example` to `.env` (if it doesn't exist)
    - Install dependencies via Poetry
+   - Install pre-commit hooks
 
 3. Edit the `.env` file with your Todoist API token:
    ```bash
@@ -144,7 +145,7 @@ This project uses [asdf](https://asdf-vm.com/) to manage tool versions (Python, 
    ```bash
    task setup
    ```
-   
+
    This will install the correct versions of Python, Poetry, and Task as specified in `.tool-versions`, and set up your development environment.
 
 4. Run the exporter:
@@ -156,6 +157,29 @@ This project uses [asdf](https://asdf-vm.com/) to manage tool versions (Python, 
    ```bash
    task test
    ```
+
+## Pre-commit Hooks
+
+This project uses pre-commit to enforce code quality and standards. The hooks ensure that all code commits meet the project's requirements.
+
+To install the pre-commit hooks:
+
+```bash
+task pre-commit-install
+```
+
+To manually run the pre-commit checks:
+
+```bash
+task pre-commit-run
+```
+
+The following checks are included:
+- Code formatting with Ruff
+- Linting with Ruff
+- Basic file checks (trailing whitespace, YAML validation, etc.)
+- Poetry configuration verification
+- Running tests
 
 ## Using Taskfile
 
@@ -187,6 +211,15 @@ task test
 
 # Run the exporter
 task run
+
+# Install pre-commit hooks
+task pre-commit-install
+
+# Run pre-commit checks on all files
+task pre-commit-run
+
+# Update pre-commit hooks to latest versions
+task pre-commit-update
 
 # Build Docker image
 task docker-build
@@ -225,7 +258,7 @@ task docker-compose-down
 
 ## License
 
-This project is licensed under the MIT License. 
+This project is licensed under the MIT License.
 
 ## GitHub Workflow Setup
 
@@ -298,4 +331,4 @@ To enable these workflows, ensure the following secrets are set in your reposito
      ```bash
      cp .env.example .env  # Add your Todoist API token
      docker-compose up -d
-     ``` 
+     ```

@@ -34,6 +34,21 @@ tasks:
     cmds:
       - "poetry run todoist-exporter"
 
+  pre-commit-install:
+    desc: Install pre-commit hooks
+    cmds:
+      - "poetry run pre-commit install"
+
+  pre-commit-run:
+    desc: Run pre-commit checks on all files
+    cmds:
+      - "poetry run pre-commit run --all-files"
+
+  pre-commit-update:
+    desc: Update pre-commit hooks to the latest version
+    cmds:
+      - "poetry run pre-commit autoupdate"
+
   docker-build:
     desc: Build the Docker image locally
     cmds:
@@ -60,6 +75,7 @@ tasks:
       - cp -n .env.example .env || true
       - echo "Created .env file from .env.example (if it didn't already exist). Please update with your TODOIST_API_TOKEN."
       - task install
+      - task pre-commit-install
 
   setup:
     desc: Setup

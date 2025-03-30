@@ -57,4 +57,4 @@ jobs:
         run: |
           asdf exec poetry config pypi-token.pypi $PYPI_API_TOKEN
           asdf exec poetry build
-          asdf exec poetry publish 
+          asdf exec poetry publish

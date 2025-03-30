@@ -35,4 +35,4 @@ ENV COLLECTION_INTERVAL=60
 EXPOSE 9090
 
 # Run the exporter
-CMD ["python", "-m", "prometheus_todoist_exporter"] 
+CMD ["python", "-m", "prometheus_todoist_exporter"]

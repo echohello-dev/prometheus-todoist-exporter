@@ -22,6 +22,7 @@ todoist-api-python = "^2.1.7"
 pytest = "^8.3.5"
 pytest-mock = "^3.14.0"
 ruff = "^0.11.2"
+pre-commit = "^3.6.2"
 
 [tool.poetry.scripts]
 todoist-exporter = "prometheus_todoist_exporter.exporter:main"
