@@ -98,3 +98,8 @@ tasks:
   all:
     desc: Run format, lint, and test tasks
     deps: [format, lint, test]
+
+  publish-pypi:
+    desc: Publish to PyPI
+    cmds:
+      - poetry publish --build

@@ -43,18 +43,38 @@ jobs:
             echo "release_found=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Cache asdf
+        uses: actions/cache@v4
+        id: asdf-cache
+        with:
+          path: ~/.asdf
+          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
+          restore-keys: |
+            ${{ runner.os }}-asdf-
+
+      - name: Cache Poetry
+        uses: actions/cache@v4
+        id: poetry-cache
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
       - name: Install asdf
         uses: asdf-vm/actions/install@1117842ea70e2711a0072e3a71265cbfe2c830be # v0.16
 
       - name: Setup asdf plugins
         run: |
-          asdf plugin add python || true
-          asdf plugin add poetry || true
-          asdf plugin add task || true
+          asdf plugin add python
+          asdf plugin add poetry
+          asdf plugin add task
 
       - name: Install tools with asdf
         run: |
           asdf install
+          pip install poetry
+          asdf reshim python
 
       - name: Install dependencies
         run: task install
@@ -71,6 +91,9 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Extract metadata for Docker
         id: meta
@@ -93,3 +116,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

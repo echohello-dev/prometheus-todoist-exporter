@@ -30,21 +30,43 @@ jobs:
             echo "release_found=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Cache asdf
+        if: steps.check-release.outputs.release_found == 'true'
+        uses: actions/cache@v4
+        id: asdf-cache
+        with:
+          path: ~/.asdf
+          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
+          restore-keys: |
+            ${{ runner.os }}-asdf-
+
+      - name: Cache Poetry
+        if: steps.check-release.outputs.release_found == 'true'
+        uses: actions/cache@v4
+        id: poetry-cache
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
       - name: Install asdf
         if: steps.check-release.outputs.release_found == 'true'
-        uses: asdf-vm/actions/setup@v2
+        uses: asdf-vm/actions/install@1117842ea70e2711a0072e3a71265cbfe2c830be # v0.16
 
       - name: Setup asdf plugins
         if: steps.check-release.outputs.release_found == 'true'
         run: |
-          asdf plugin add python || true
-          asdf plugin add poetry || true
-          asdf plugin add task || true
+          asdf plugin add python
+          asdf plugin add poetry
+          asdf plugin add task
 
       - name: Install tools with asdf
         if: steps.check-release.outputs.release_found == 'true'
         run: |
           asdf install
+          pip install poetry
+          asdf reshim python
 
       - name: Install dependencies
         if: steps.check-release.outputs.release_found == 'true'
