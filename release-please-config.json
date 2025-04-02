@@ -2,7 +2,8 @@
     "packages": {
         ".": {
             "release-type": "python",
-            "package-name": "prometheus-todoist-exporter"
+            "package-name": "prometheus-todoist-exporter",
+            "include-component-in-tag": false
         }
     },
     "bump-minor-pre-major": true,
