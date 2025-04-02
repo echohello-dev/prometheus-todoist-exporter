@@ -2,19 +2,7 @@
     "packages": {
         ".": {
             "release-type": "python",
-            "package-name": "prometheus-todoist-exporter",
-            "extra-files": [
-                {
-                    "type": "json",
-                    "path": "pyproject.toml",
-                    "jsonpath": "$.tool.poetry.version"
-                },
-                {
-                    "type": "generic",
-                    "path": "prometheus_todoist_exporter/__init__.py",
-                    "pattern": "__version__ = \"${version}\""
-                }
-            ]
+            "package-name": "prometheus-todoist-exporter"
         }
     },
     "bump-minor-pre-major": true,
