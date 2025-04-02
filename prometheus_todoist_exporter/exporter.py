@@ -33,11 +33,6 @@ TODOIST_TASKS_DUE_TODAY = Gauge(
     "Number of tasks due today",
     ["project_name", "project_id"],
 )
-TODOIST_TASKS_COMPLETED = Counter(
-    "todoist_tasks_completed",
-    "Number of completed tasks",
-    ["project_name", "project_id"],
-)
 TODOIST_PROJECT_COLLABORATORS = Gauge(
     "todoist_project_collaborators",
     "Number of collaborators per project",
