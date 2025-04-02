@@ -23,7 +23,7 @@ requests = "^2.31.0"
 pytest = "^8.3.5"
 pytest-mock = "^3.14.0"
 ruff = "^0.11.2"
-pre-commit = "^3.6.2"
+pre-commit = "^4.0.0"
 
 [tool.poetry.scripts]
 todoist-exporter = "prometheus_todoist_exporter.exporter:main"
