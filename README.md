@@ -7,6 +7,8 @@ Extract Todoist API metrics via Prometheus with this exporter.
 > [!IMPORTANT]
 > This project is not affiliated with Todoist. It is a community-driven project.
 
+![](docs/images/todoist-grafana.jpeg)
+
 ## Features
 
 - Collects metrics from the Todoist API using the [official Python client](https://github.com/Doist/todoist-api-python)
@@ -45,6 +47,22 @@ The exporter provides the following metrics:
 | `todoist_tasks_with_due_date` | Number of tasks with a due date | project_name, project_id |
 | `todoist_recurring_tasks` | Number of recurring tasks | project_name, project_id |
 | `todoist_sync_api_completed_tasks` | Number of tasks completed via Sync API | project_name, project_id, timeframe |
+
+## Grafana Dashboard
+
+This project includes a pre-configured Grafana dashboard to visualize the exported metrics. You can find the dashboard definition in `grafana/dashboard.json`.
+
+To import the dashboard into your Grafana instance:
+
+1.  Navigate to your Grafana UI.
+2.  Go to `Dashboards` -> `Browse`.
+3.  Click the `Import` button (usually in the top right).
+4.  Click `Upload JSON file` and select the `grafana/dashboard.json` file from this repository.
+5.  Alternatively, you can paste the JSON content directly into the text area.
+6.  Configure the dashboard options, such as selecting your Prometheus data source.
+7.  Click `Import`.
+
+This dashboard provides panels for visualizing active tasks, completion trends, task breakdowns by project/priority/label, and exporter health metrics.
 
 ## Configuration
 
