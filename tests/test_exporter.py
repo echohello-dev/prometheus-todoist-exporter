@@ -35,7 +35,6 @@ class TestTodoistExporter(unittest.TestCase):
         self.tasks_total = exporter.TODOIST_TASKS_TOTAL
         self.tasks_overdue = exporter.TODOIST_TASKS_OVERDUE
         self.tasks_due_today = exporter.TODOIST_TASKS_DUE_TODAY
-        self.tasks_completed = exporter.TODOIST_TASKS_COMPLETED
         self.project_collaborators = exporter.TODOIST_PROJECT_COLLABORATORS
         self.sections_total = exporter.TODOIST_SECTIONS_TOTAL
         self.comments_total = exporter.TODOIST_COMMENTS_TOTAL

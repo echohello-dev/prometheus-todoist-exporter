@@ -30,7 +30,6 @@ The exporter provides the following metrics:
 | `todoist_tasks_total` | Total number of active tasks | project_name, project_id |
 | `todoist_tasks_overdue` | Number of overdue tasks | project_name, project_id |
 | `todoist_tasks_due_today` | Number of tasks due today | project_name, project_id |
-| `todoist_tasks_completed` | Number of completed tasks (counter) | project_name, project_id |
 | `todoist_project_collaborators` | Number of collaborators per project | project_name, project_id |
 | `todoist_sections_total` | Number of sections per project | project_name, project_id |
 | `todoist_comments_total` | Number of comments | project_name, project_id |
@@ -423,8 +422,7 @@ To enable these workflows, ensure the following secrets are set in your reposito
      ```bash
      cp .env.example .env  # Add your Todoist API token
      task setup-dev  # Install dependencies
-     ```
-   - Make code changes and test locally with:
+     ```   - Make code changes and test locally with:
      ```bash
      source .env && task run
      ```
