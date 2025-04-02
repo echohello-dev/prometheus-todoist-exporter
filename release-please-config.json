@@ -10,7 +10,7 @@
                     "jsonpath": "$.tool.poetry.version"
                 },
                 {
-                    "type": "simple",
+                    "type": "generic",
                     "path": "prometheus_todoist_exporter/__init__.py",
                     "pattern": "__version__ = \"${version}\""
                 }
