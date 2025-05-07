@@ -5,6 +5,12 @@
     ],
     "packageRules": [
         {
+            "matchCategories": [
+                "docker"
+            ],
+            "enabled": true
+        },
+        {
             "matchUpdateTypes": [
                 "minor",
                 "patch"
@@ -13,16 +19,13 @@
             "automerge": true
         },
         {
-            "matchPackagePatterns": [
-                "^pytest"
-            ],
-            "groupName": "pytest packages"
+            "groupName": "pytest packages",
+            "matchPackageNames": [
+                "/^pytest/"
+            ]
         }
     ],
     "poetry": {
-        "enabled": true
-    },
-    "docker": {
         "enabled": true
     },
     "github-actions": {
@@ -33,8 +36,8 @@
     },
     "asdf": {
         "enabled": true,
-        "fileMatch": [
-            "(^|/)\\.tool-versions$"
+        "managerFilePatterns": [
+            "/(^|/)\\.tool-versions$/"
         ]
     },
     "dependencyDashboard": true,
