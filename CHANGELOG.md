@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/echohello-dev/prometheus-todoist-exporter/compare/v1.2.0...v1.2.1) (2025-06-10)
+
+
+### Bug Fixes
+
+* **deps:** update dependency requests to v2.32.4 [security] ([#18](https://github.com/echohello-dev/prometheus-todoist-exporter/issues/18)) ([79d4352](https://github.com/echohello-dev/prometheus-todoist-exporter/commit/79d435254c2f3bfb9cc043057a21554e63ed4276))
+
 ## [1.2.0](https://github.com/echohello-dev/prometheus-todoist-exporter/compare/v1.1.0...v1.2.0) (2025-04-02)
 
 
